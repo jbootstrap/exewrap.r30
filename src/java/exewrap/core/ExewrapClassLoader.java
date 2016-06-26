@@ -54,8 +54,8 @@ public class ExewrapClassLoader extends ClassLoader {
 		if(name == null) {
 			name = "";
 		}
-		
-		this.context = new URL("jar:file:/" + path.replace('\\', '/') + '/' + name + "!/");
+		java.io.File file = new java.io.File(path+"\\"+name);
+		this.context = new URL("jar:"+file.toURI().toURL() + "!/");
 	}
 	
 	public void register() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
