@@ -483,7 +483,10 @@ void InitializePath(char* relative_classpath, char* relative_extdirs, BOOL useSe
 
 	if(relative_classpath != NULL)
 	{
-		while((token = strtok(relative_classpath, " ")) != NULL)
+		char *copied = (char *)malloc(strlen(relative_classpath)+1);
+		strcpy(copied, relative_classpath);
+		token = strtok(copied, " ");
+		while(token != NULL)
 		{
 			if(strstr(token, ":") == NULL)
 			{
@@ -492,9 +495,11 @@ void InitializePath(char* relative_classpath, char* relative_extdirs, BOOL useSe
 			}
 			lstrcat(classpath, token);
 			lstrcat(classpath, ";");
-			relative_classpath = NULL;
+			token = strtok(NULL, " ");
 		}
+		free(copied);
 	}
+
 	lstrcat(classpath, ".");
 
 	if(relative_extdirs != NULL)
