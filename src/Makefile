@@ -216,8 +216,8 @@ $(OBJ)\message.obj : $(OBJ) message.c
 $(OBJ)\loader.obj : $(OBJ) loader.c
 	$(CC) $(CFLAGS) $(INC) /Fo$(OBJ)\loader.obj loader.c
 
-$(OBJ)\jvm.obj : $(OBJ) jvm.c
-	$(CC) $(CFLAGS) $(INC) /Fo$(OBJ)\jvm.obj jvm.c
+$(OBJ)\jvm.obj : $(OBJ) jvm.cpp
+	$(CC) $(CFLAGS) $(INC) /Fo$(OBJ)\jvm.obj jvm.cpp
 
 $(OBJ)\trace.obj : $(OBJ) trace.c
 	$(CC) $(CFLAGS) $(INC) /Fo$(OBJ)\trace.obj trace.c

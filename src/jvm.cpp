@@ -136,7 +136,8 @@ void DestroyJavaVM()
 {
 	if(jvm != NULL)
 	{
-		(*jvm)->DestroyJavaVM(jvm);
+		////(*jvm)->DestroyJavaVM(jvm);
+		(jvm)->DestroyJavaVM();
 		jvm = NULL;
 	}
 
@@ -161,7 +162,8 @@ JNIEnv* AttachJavaVM()
 {
 	JNIEnv* env;
 
-	if((*jvm)->AttachCurrentThread(jvm, (void**)&env, NULL) != 0)
+	////if ((*jvm)->AttachCurrentThread(jvm, (void**)&env, NULL) != 0)
+	if ((jvm)->AttachCurrentThread((void**)&env, NULL) != 0)
 	{
 		env = NULL;
 	}
@@ -170,7 +172,8 @@ JNIEnv* AttachJavaVM()
 
 void DetachJavaVM()
 {
-	(*jvm)->DetachCurrentThread(jvm);
+	////(*jvm)->DetachCurrentThread(jvm);
+	(jvm)->DetachCurrentThread();
 }
 
 DWORD GetJavaRuntimeVersion()
@@ -185,13 +188,16 @@ DWORD GetJavaRuntimeVersion()
 	
 	if(javaRuntimeVersion == 0xFFFFFFFF)
 	{
-		systemClass = (*env)->FindClass(env, "java/lang/System");
+		////systemClass = (*env)->FindClass(env, "java/lang/System");
+		systemClass = (env)->FindClass("java/lang/System");
 		if(systemClass != NULL)
 		{
-			getPropertyMethod = (*env)->GetStaticMethodID(env, systemClass, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+			////getPropertyMethod = (*env)->GetStaticMethodID(env, systemClass, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+			getPropertyMethod = (env)->GetStaticMethodID(systemClass, "getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
 			if(getPropertyMethod != NULL)
 			{
-				version = GetShiftJIS(env, (jstring)((*env)->CallStaticObjectMethod(env, systemClass, getPropertyMethod, GetJString(env, "java.runtime.version"))));
+				////version = GetShiftJIS(env, (jstring)((*env)->CallStaticObjectMethod(env, systemClass, getPropertyMethod, GetJString(env, "java.runtime.version"))));
+				version = GetShiftJIS(env, (jstring)((env)->CallStaticObjectMethod(systemClass, getPropertyMethod, GetJString(env, "java.runtime.version"))));
 				while(*version != '\0' && !('0' <= *version && *version <= '9'))
 				{
 					while(*version != '\0' && !(*version == ' ' || *version == '\t' || *version == '_' || *version == '-'))
@@ -250,7 +256,8 @@ jstring GetJString(JNIEnv* _env, const char* src)
 	wSize = MultiByteToWideChar(CP_ACP, 0, src, lstrlen(src), NULL, 0);
 	wBuf = (WCHAR*)HeapAlloc(GetProcessHeap(), 0, wSize * 2);
 	MultiByteToWideChar(CP_ACP, 0, src,	lstrlen(src), wBuf, wSize);
-	str = (*_env)->NewString(_env, (jchar*)wBuf, wSize);
+	////str = (*_env)->NewString(_env, (jchar*)wBuf, wSize);
+	str = (_env)->NewString((jchar*)wBuf, wSize);
 	HeapFree(GetProcessHeap(), 0, wBuf);
 	return str;
 }
@@ -269,12 +276,14 @@ char* GetShiftJIS(JNIEnv* _env, jstring src)
 	{
 		_env = env;
 	}
-	unicode = (*_env)->GetStringChars(_env, src, NULL);
+	////unicode = (*_env)->GetStringChars(_env, src, NULL);
+	unicode = (_env)->GetStringChars(src, NULL);
 	length = lstrlenW((wchar_t*)unicode);
 	ret = (char*)HeapAlloc(GetProcessHeap(), 0, sizeof(char) * length * 2 + 1);
 	SecureZeroMemory(ret, sizeof(char) * length * 2 + 1);
 	WideCharToMultiByte(CP_ACP, 0, (WCHAR*)unicode, length, ret, length * 2 + 1, NULL, NULL);
-	(*_env)->ReleaseStringChars(_env, src, unicode);
+	////(*_env)->ReleaseStringChars(_env, src, unicode);
+	(_env)->ReleaseStringChars(src, unicode);
 	return ret;
 }
 
@@ -311,7 +320,8 @@ void InitializePath(char* relative_classpath, char* relative_extdirs, BOOL useSe
 	extdirs[0] = '\0';
 	libpath[0] = '\0';
 
-	buffer = HeapAlloc(GetProcessHeap(), 0, 64 * 1024);
+	////buffer = HeapAlloc(GetProcessHeap(), 0, 64 * 1024);
+	buffer = (char*)HeapAlloc(GetProcessHeap(), 0, 64 * 1024);
 
 	lstrcpy(opt_app_version, "-Djava.application.version=");
 	lstrcat(opt_app_version, GetModuleVersion(buffer));

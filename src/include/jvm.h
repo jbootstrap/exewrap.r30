@@ -1,6 +1,10 @@
 #ifndef _JVM_H_
 #define _JVM_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #define JVM_ELOADLIB	(+1)
 
 extern int     GetProcessArchitecture();
@@ -20,4 +24,8 @@ extern void    AddPath(const char* path);
 extern JavaVM* jvm;
 extern JNIEnv* env;
 
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+	
 #endif
